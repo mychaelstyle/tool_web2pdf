@@ -35,9 +35,9 @@ def main():
 
     df = pd.read_excel(args[1],sheet_name=args[2])
     for index, row in df.iterrows():
-        print("%s:%s:%s" % (row[0],row[1],row[2]))
-        outpath = os.path.join(args[3], '%s.pdf' % row[0])
-        get_pdf(row[2], outpath)
+        print("%s:%s:%s" % (row['ID'],row['Category'],row['URL']))
+        outpath = os.path.join(args[3], '%s.pdf' % row['ID'])
+        get_pdf(row['URL'], outpath)
     
 if __name__ == '__main__':
     main()
