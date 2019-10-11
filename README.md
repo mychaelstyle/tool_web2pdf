@@ -8,9 +8,10 @@ Webアプリケーションで表示している指定の大量の詳細ペー�
 Environment
 ===========
 
-- Mac OS X 10.14.6
+- Mac OS X >= 10.3
 - python >= 3.7
-- anaconda3-2019.03
+- anaconda3 >= 2019.03
+- PyPDF2
 - Google Chrome >= 77.0.3865.90 (Official Build)
 
 How to use
@@ -32,9 +33,13 @@ Excelのフォーマット
 
     python setup.py install
 
-ターミナルを起動してクローンしたフォルダの中に移動し、下記のコマンドを実行してください。
+ExcelからURLのPDFを生成するにはターミナルを起動してクローンしたフォルダの中に移動し、下記のコマンドを実行してください。
 
     python make.py [excel file path] [excel sheet name] [output folder path]
+
+フォルダ内のPDFを全てサーチして1ページ目だけ指定した出力フォルダに出力するには下記のコマンドを実行してください。
+
+    python page_picker.py [Source folder path] [Output folder path]
 
 How to use on another OS
 ========================

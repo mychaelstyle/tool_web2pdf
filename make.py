@@ -1,9 +1,13 @@
 import subprocess, time, os, sys
 import pandas as pd
 
+# Google Chromeコマンドのパス
 PATH_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+# PDFのファイル名となるExcelの列ラベル名
 COLUMN_LABEL_ID = "ID"
+# PDFにするURLを記述するExcelの列ラベル名
 COLUMN_LABEL_URL = "URL"
+# PDFを保存する振り分けフォルダ名を記述するExcelの列ラベル名
 COLUMN_LABEL_CATEGORY = "Category"
 
 def to_pdf(url, output_folder, file_name):
