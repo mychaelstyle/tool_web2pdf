@@ -68,14 +68,25 @@ def main():
         print("Output folder path is not exists!")
         return
 
+    isAStr = lambda val True if type(val) is str and len(val)>0 else False
+
     for (file_id,url,category) in read_excel_rows(args[1],args[2]):
         print("%s:%s:%s" % (file_id,url,category))
         file_name = "%s.pdf" % file_id
         out_dir = args[3]
-        if not category is None:
-            out_dir = os.path.join(out_dir, category)
-        to_pdf(url, out_dir,file_name)
-    
+
+        if not isAStr(file_id):
+            print("url is not available str! %s" % url)
+        elif not isAStr(url):
+            print("url is not available str! %s" % file_id)
+        else:
+            if isAStr(category):
+                out_dir = os.path.join(out_dir, category)
+
+            if not os.path.exists(out_dir):
+                os.makedirs(out_dir)
+            to_pdf(url,out_dir,file_name)
+        
 if __name__ == '__main__':
     main()
 
