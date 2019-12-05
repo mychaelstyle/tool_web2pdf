@@ -1,5 +1,7 @@
 import subprocess, time, os, sys
 import pandas as pd
+import time
+import numpy
 
 # Google Chromeコマンドのパス
 PATH_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -17,13 +19,24 @@ def to_pdf(url, output_folder, file_name):
     elif not os.path.isdir(output_folder):
         raise Exception("%s is not a folder!" % output_folder)
     if not os.path.exists(tmpdir):
-        os.mkdir(tmpdir)
+        os.makedirs(tmpdir)
     save_file_path = os.path.join(output_folder,file_name)
+    command = PATH_CHROME + \
+                " --headless" + \
+                " --disable-gpu" + \
+                " --lang=ja" + \
+                " --virtual-time-budget=5000" + \
+                (" --print-to-pdf=%s" % save_file_path) + \
+                (" -crash-dumps-dir=%s" % tmpdir) + \
+                url
+    print(command)
     proc = subprocess.run(
             [
                 PATH_CHROME,
                 "--headless",
-                " --disable-gpu",
+                "--disable-gpu",
+                "--lang=ja",
+                "--virtual-time-budget=5000",
                 "--print-to-pdf=%s"%save_file_path,
                 "-crash-dumps-dir=%s"%tmpdir,
                 url])
@@ -34,12 +47,21 @@ def to_pdf(url, output_folder, file_name):
     if not proc.stderr is None:
         print(proc.stderr.decode("utf8"))
 
+
+    if not os.path.exists(save_file_path):
+        time.sleep(10)
+        to_pdf(url, output_folder, file_name)
+    elif (1024 * 30) > os.path.getsize(save_file_path):
+        time.sleep(10)
+        to_pdf(url, output_folder, file_name)
+
 def read_excel_rows(file_path,sheet):
     if not os.path.exists(file_path):
         raise FileNotFoundError("%s is not found!" % file_path)
     df = pd.read_excel(file_path,sheet_name=sheet)
+    df.fillna("None")
     if not COLUMN_LABEL_ID in df.columns:
-        raise KeyError("%s label is not found!"%COLUMN_LABEL_ID)
+        raise KeyError("%s label is not found!" % COLUMN_LABEL_ID)
     if not COLUMN_LABEL_URL in df.columns:
         raise KeyError("%s label is not found!"%COLUMN_LABEL_URL)
     for index, row in df.iterrows():
@@ -68,14 +90,28 @@ def main():
         print("Output folder path is not exists!")
         return
 
+    isAStr = lambda val True if type(val) is str and len(val)>0 else False
+
     for (file_id,url,category) in read_excel_rows(args[1],args[2]):
         print("%s:%s:%s" % (file_id,url,category))
-        file_name = "%s.pdf" % file_id
+        file_name = "%s.pdf" % file_id.replace(" ","")
         out_dir = args[3]
         if not category is None:
             out_dir = os.path.join(out_dir, category)
-        to_pdf(url, out_dir,file_name)
-    
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir);
+
+        if not isAStr(file_id):
+            print("file id is not available str! %s" % file_id)
+        elif not isAStr(url):
+            print("url is not available str! %s" % url)
+        else:
+            if isAStr(category):
+                out_dir = os.path.join(out_dir, category)
+            if not os.path.exists(out_dir):
+                os.makedirs(out_dir)
+            to_pdf(url,out_dir,file_name)
+
 if __name__ == '__main__':
     main()
 
