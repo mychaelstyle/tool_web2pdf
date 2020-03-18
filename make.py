@@ -90,7 +90,7 @@ def main():
         print("Output folder path is not exists!")
         return
 
-    isAStr = lambda val True if type(val) is str and len(val)>0 else False
+    isAStr = lambda val: True if type(val) is str and len(val)>0 else False
 
     for (file_id,url,category) in read_excel_rows(args[1],args[2]):
         print("%s:%s:%s" % (file_id,url,category))
